@@ -30,6 +30,11 @@ from api.analytics import get_date_range
 import os
 import requests
 
+import sys
+print(f"Python interpreter: {sys.executable}")
+import site
+print(f"Site packages: {site.getsitepackages()}")
+
 # Load environment variables
 load_dotenv()
 
