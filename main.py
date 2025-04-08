@@ -17,6 +17,7 @@ from __init__ import app, db, login_manager  # Key Flask objects
 from api.user import user_api 
 from api.section import section_api
 from api.pfp import pfp_api
+from api.faceRecog import facial_api
 from api.stock import stock_api
 from api.analytics import analytics_api
 from api.student import student_api
@@ -43,7 +44,7 @@ app.register_blueprint(user_api)
 app.register_blueprint(section_api)
 app.register_blueprint(pfp_api) 
 app.register_blueprint(stock_api)
-
+app.register_blueprint(facial_api)
 app.register_blueprint(analytics_api)
 app.register_blueprint(student_api)
 

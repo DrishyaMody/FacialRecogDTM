@@ -146,6 +146,8 @@ class User(db.Model, UserMixin):
     _password = db.Column(db.String(255), unique=False, nullable=False)
     _role = db.Column(db.String(20), default="User", nullable=False)
     _pfp = db.Column(db.String(255), unique=False, nullable=True)
+    _face_image = db.Column(db.String(255), unique=False, nullable=True)  # New: face image path
+
     kasm_server_needed = db.Column(db.Boolean, default=False)
    
     # Define many-to-many relationship with Section model through UserSection table 
@@ -165,6 +167,8 @@ class User(db.Model, UserMixin):
         self._role = role
         self._pfp = pfp
 
+  
+
     # UserMixin/Flask-Login requires a get_id method to return the id as a string
     def get_id(self):
         return str(self.id)
@@ -173,7 +177,17 @@ class User(db.Model, UserMixin):
     @property
     def is_authenticated(self):
         return True
+    
+    # Face image getter
+    @property
+    def face_image(self):
+        return self._face_image
 
+    # Face image setter
+    @face_image.setter
+    def face_image(self, image_path):
+        self._face_image = image_path
+        
     # UserMixin/Flask-Login requires is_active to be defined
     @property
     def is_active(self):
@@ -366,6 +380,20 @@ class User(db.Model, UserMixin):
             db.session.rollback()
         return None   
     
+    def save_face_image(self, image_data, filename):
+   # Save the facial image to user's folder and update path.
+        try:
+            user_dir = os.path.join(app.config['UPLOAD_FOLDER'], self.uid)
+            if not os.path.exists(user_dir):
+                os.makedirs(user_dir)
+            file_path = os.path.join(user_dir, filename)
+            with open(file_path, 'wb') as img_file:
+                img_file.write(image_data)
+            self.face_image = filename  # Update DB with filename
+            db.session.commit()
+        except Exception as e:
+            raise e
+
     def save_pfp(self, image_data, filename):
         """For saving profile picture."""
         try:
